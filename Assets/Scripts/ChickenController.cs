@@ -7,8 +7,8 @@ public class ChickenController : MonoBehaviour
     private Rigidbody rb;
     public float moveSpeed = 2f;
     private bool isMoving = false;
-    private float changeTimeMin = 2f;
-    private float changeTimeMax = 5f;
+    private float changeTimeMin = 1f;
+    private float changeTimeMax = 2f;
     public LayerMask groundLayer; 
 
     void Start()

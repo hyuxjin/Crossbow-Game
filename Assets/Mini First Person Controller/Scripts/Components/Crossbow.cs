@@ -12,11 +12,24 @@ public class Crossbow : MonoBehaviour
     private Animator animator;  // Animator for firing animation
     private bool canShoot = true;  // Cooldown flag to prevent firing too quickly
 
+    // Add these for sound effect
+    public AudioClip shootSound;  // Sound to play when the weapon is fired
+    private AudioSource audioSource;  // AudioSource to play the sound
+
     // Start is called before the first frame update
     void Start()
     {
         // Get the Animator component from the crossbow
         animator = GetComponent<Animator>();
+
+        // // Get the AudioSource component from the crossbow (make sure there is one in the scene)
+        // audioSource = GetComponent<AudioSource>();
+        
+        // If there is no AudioSource, you can add one
+        if (audioSource == null)
+        {
+            audioSource = gameObject.AddComponent<AudioSource>();
+        }
     }
 
     // Update is called once per frame
@@ -57,7 +70,15 @@ public class Crossbow : MonoBehaviour
             Vector3 fireDirection = bulletSpawn.forward;
             rb.AddForce(fireDirection * bulletVelocity, ForceMode.Impulse);  // Add force to the bullet
         }
+
+        // Play the shooting sound if assigned
+        if (shootSound != null)
+        {
+            audioSource.PlayOneShot(shootSound);
+        }
+
         animator.SetBool("Fire", false);
+
         // Destroy the bullet after a set time
         Destroy(bullet, bulletPrefabLifeTime);
 

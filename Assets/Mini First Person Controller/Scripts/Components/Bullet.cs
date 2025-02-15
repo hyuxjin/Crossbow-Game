@@ -3,8 +3,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour
 {
     private Rigidbody rb;
-    private static int targetCount = 0; // ✅ Static: Shared across all bullets
-
+    
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -15,42 +14,30 @@ public class Bullet : MonoBehaviour
         if (collision.gameObject.CompareTag("Objects"))
         {
             print("Hit " + collision.gameObject.name + " !");
-
             if (rb != null)
             {
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
                 rb.isKinematic = true;
             }
-
             transform.position = collision.contacts[0].point;
             transform.SetParent(collision.transform);
         }
-        else if (collision.gameObject.CompareTag("Target")) // 🎯 Hits a target
-            {
-                targetCount += 1;
-                print("Hit Target: " + targetCount + " !");
-
-                if (PointsManager.instance != null) 
-                {
-                    PointsManager.instance.AddPoints(100); // ✅ Add 100 points!
-                }
-
-                if (rb != null)
-                {
-                    rb.velocity = Vector3.zero;
-                    rb.angularVelocity = Vector3.zero;
-                    rb.isKinematic = true;
-                }
-
-                collision.gameObject.SetActive(false);
-                gameObject.SetActive(false);
-            }
-        if (collision.gameObject.CompareTag("Animal")) // Make sure the target has this tag
+        else if (collision.gameObject.CompareTag("Target")) // 🎯 Target Hit
         {
-            LifeManager.instance.DecreaseLife();
+            LifeManager.instance.IncreaseTargetCount(); // ✅ Correct tracking
+            print("Hit Target! Total Hits: " + LifeManager.instance.GetTargetCount()); 
 
-                        if (rb != null)
+            float distance = Vector3.Distance(transform.position, collision.transform.position);
+            int points = Mathf.Max(0, (int)(100 / (distance + 1) + 100));
+
+            if (PointsManager.instance != null)
+            {
+                PointsManager.instance.AddPoints(points);
+                PointsManager.instance.PlaySoundEffect(true);
+            }
+
+            if (rb != null)
             {
                 rb.velocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
@@ -60,6 +47,25 @@ public class Bullet : MonoBehaviour
             collision.gameObject.SetActive(false);
             gameObject.SetActive(false);
         }
+        else if (collision.gameObject.CompareTag("Animal"))
+        {
+            LifeManager.instance.DecreaseLife();
 
+            if (PointsManager.instance != null)
+            {
+                PointsManager.instance.DecreasePoints(50);
+                PointsManager.instance.PlaySoundEffect(false);
+            }
+
+            if (rb != null)
+            {
+                rb.velocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = true;
+            }
+
+            collision.gameObject.SetActive(false);
+            gameObject.SetActive(false);
+        }
     }
 }

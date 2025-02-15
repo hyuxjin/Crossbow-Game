@@ -24,27 +24,20 @@ public class HorseController : MonoBehaviour
     {
         while (true)
         {
+            // Wait for a random amount of time before changing the state
             float waitTime = Random.Range(changeTimeMin, changeTimeMax);
             yield return new WaitForSeconds(waitTime);
 
-            int randomState = Random.Range(0, 3); // 0 = Idle, 1 = Walk, 2 = Eat
+            // Trigger "Walk" animation
+            anim.SetBool("Walk", true);
+            isMoving = true; // Set isMoving to true when walking starts
 
-            if (randomState == 0) 
-            {
-                anim.SetTrigger("Idle");
-                isMoving = false;
-            }
-            else if (randomState == 1) 
-            {
-                anim.SetTrigger("Walk");
-                isMoving = true;
-                RotateRandomly();
-            }
-            else 
-            {
-                anim.SetTrigger("Eat");
-                isMoving = false;
-            }
+            // Wait for 3 seconds before setting the "Walk" animation to false
+            yield return new WaitForSeconds(1f);
+            
+            // Set the "Walk" animation to false after 3 seconds
+            anim.SetBool("Walk", false);
+            isMoving = false; // Set isMoving to false when walking stops
         }
     }
 
