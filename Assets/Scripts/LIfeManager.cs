@@ -63,8 +63,14 @@ public class LifeManager : MonoBehaviour
 
         if (targetCount >= 15)
         {
-            ShowVictoryPanel();
+            StartCoroutine(DelayedVictoryPanel()); // Ensure latest score updates
         }
+    }
+
+    private IEnumerator DelayedVictoryPanel()
+    {
+        yield return new WaitForEndOfFrame(); // Wait for score updates
+        ShowVictoryPanel();
     }
 
     private void ShowVictoryPanel()
